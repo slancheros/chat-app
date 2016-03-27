@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+
+    <style>
+	
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+ 
+	  .toggler { width: 500px; height: 200px; position: relative; }
+	  #btnChange { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+		#effect { width: 240px;  padding: 1em;  font-size: 1.2em; border: 1px solid #000;}
+		.newClass { text-indent: 40px; letter-spacing: .4em; width: 410px; height: 100px; padding: 30px; margin: 10px; font-size: 1.6em; color: #234;  }
+    </style>
+		<link rel="stylesheet" type="text/css"  href="ribbon.css"/>
+  </head>
+   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+  <script src="/socket.io/socket.io.js"></script>
+
+
+  <body>
+	  
+		<h1 class="ribbon">
+			<strong class="ribbon-content">Everybody loves ribbons</strong>
+		</h1>
+	
+ 
+  <div >
+    <div id="effect">
+		<ul id="messages" ></ul>
+	</div>
+  </div>
+   <form  action="">
+      <input id="message" autocomplete="off" type="text"/>
+	  <input id="btnSend" type="submit" value="Send"/>
+	  
+	  <select name="effects" id="effectTypes">
+		  <option value="blind">Blind</option>
+		  <option value="bounce">Bounce</option>
+		  <option value="clip">Clip</option>
+		  <option value="drop">Drop</option>
+		  <option value="explode">Explode</option>
+		  <option value="fold">Fold</option>
+		  <option value="highlight">Highlight</option>
+		  <option value="puff">Puff</option>
+		  <option value="pulsate">Pulsate</option>
+		  <option value="scale">Scale</option>
+		  <option value="shake">Shake</option>
+		  <option value="size">Size</option>
+		  <option value="slide">Slide</option>
+		</select>
+	  <input id="btnChange" type="button" value="Run Effect"></button>
+    </form>
+	
+	<script>
+	  var socket = io();
+	  $("form").submit(function(){
+		socket.emit('chat', $('#message').val());
+		$('#message').val('');
+
+		return false;
+	  });
+	   socket.on('chat', function(msg){
+			$('#messages').append($('<li class="clsMessage">').text(msg));
+		 
+		});
+	 
+	
+     $(function() {
+    // run the currently selected effect
+    function runEffect() {
+      // get effect type from
+      var selectedEffect = $( "#effectTypes" ).val();
+ 
+      // most effect types need no options passed by default
+      var options = {};
+      // some effects have required parameters
+      if ( selectedEffect === "scale" ) {
+        options = { percent: 100 };
+      } else if ( selectedEffect === "size" ) {
+        options = { to: { width: 280, height: 185 } };
+      }
+ 
+      // run the effect
+      $( ".clsMessage" ).toggle( selectedEffect, options, 500 );
+	
+	  $( "#messages" ).addClass("ribbon");
+	  $( ".clsMessage" ).addClass("ribbon-content");  
+    };
+ 
+
+ 
+    // set effect from select menu value
+    $( "#btnChange" ).click(function() {
+      runEffect();
+    });
+ 
+    
+  });
+	
+
+ 
+	</script>
+  </body>
+</html>
